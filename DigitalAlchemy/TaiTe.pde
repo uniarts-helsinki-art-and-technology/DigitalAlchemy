@@ -537,6 +537,7 @@ void drawMagicWords()
   } else
   {
     textSize(22);
+    textAlign(LEFT);
     fill(0, 50);
     text("Type 'charms' and hit ENTER for magic. Press ESC to quit.", 50, 51);
     text("Type 'charms' and hit ENTER for magic. Press ESC to quit.", 49, 49);
@@ -546,7 +547,9 @@ void drawMagicWords()
   }
 
   textSize(30);
-  text(magic_words, width/2-textWidth(magic_words)/2, height-200);
+  textAlign(CENTER);
+ // text(magic_words, width/2-textWidth(magic_words)/2, height-200, width, height);
+  text(magic_words, 0, height/2, width, height);
 
   cam.endHUD(); // always
 }
