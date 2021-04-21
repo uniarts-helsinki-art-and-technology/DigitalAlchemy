@@ -14,6 +14,8 @@ void setup()
 void draw()
 {
   background(20);
+  if(!isProcessing)
+  {
   // Should manipulate pixels!  drawFlippedImage(testikuva);
   // doodling(testikuva);
   moveImageWithKeyboard(100);
@@ -21,4 +23,5 @@ void draw()
   //drawImageGrid(testikuva,5);
   recording();
   drawMagicWords();
+  }
 }

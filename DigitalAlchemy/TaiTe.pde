@@ -15,14 +15,16 @@ int peasycam_speed = 50;
 boolean record = false;
 boolean record_sequence = false;
 boolean show_help = false;
+boolean isProcessing = false;
+boolean cameraActive = true;
 
 String magic_words_list[] = {
   "hylkeet", 
   " ", 
   "red to blue", 
-  "blur", 
-  "white to red", 
-  "pixel sorting", 
+  "blur", "blurs", "blurred", 
+  "reds", 
+  "sorting", 
   "mirror", 
   "stretch", 
   " ", 
@@ -30,14 +32,14 @@ String magic_words_list[] = {
   "saveFrame", 
   "stop", 
   "loadImage", 
-  "selectInput", 
+  "image", 
   " ", 
-  "start camera", 
-  "stop camera", 
-  "reset position", 
+  "float", 
+  "freeze", 
+  "reset", 
   "help", 
 
-  "close help"
+  "helpless"
 };
 
 PGraphics drawing;
@@ -67,8 +69,17 @@ void keyPressed()
 {
   //  println(parseInt(key));
   if (parseInt(key) == 10) {
-    runFunction(magic_words);   
+    cam.setActive(false);
+    String[] list_of_magic_words = split(magic_words, ' ');
+    runFunction(list_of_magic_words);
+    isProcessing=false;
+
     magic_words="";
+    println("Done processing");
+    if (cameraActive)
+    {
+      cam.setActive(true);
+    }
   }
   // zoomaus yksityiskohtaan
 
@@ -113,78 +124,96 @@ void keyPressed()
   }
 }
 
-void runFunction(String letters)
+void runFunction(String letters[])
 {
-  switch(letters) {
-  case "hylkeet":
-    testikuva = loadImage("testi.jpg");
-    break;
-  case "red to blue":
-    redPixelsToBlue(testikuva);
-    break;
-  case "blur":
-    blur(testikuva);
-    break;
-  case "white to red":
-    whitePixelsToRed(testikuva, 250);
-    break;
-  case "pixel sorting":
-    pixelSorting(testikuva, int(random(10, 50)));
-    break;
-  case "mirror":
-    mirror(testikuva);
-    break;
-  case "difference":
-    //difference(testikuva, testikuva2);
-    break;
-  case "stretch":
-    stretch(testikuva, int(random(testikuva.width)));
-    break;
-  case "save":
-    record=true;
-    break;
-  case "saveFrame":
-    record_sequence = !record_sequence;
-    break;
-  case "stop":
-    record_sequence = false;
-    record = false;
-    break;
-  case "loadImage":
-    testikuva = loadImage("testi.jpg");
-    testikuva2 = loadImage("testi2.jpg");
-    break;
-  case "selectInput":
-    selectInput("Select a file to process:", "fileSelected");
-    break;
-  case "start camera":
-    cam.lookAt(0, 0, 0);
-    cam.reset(500);  // reset camera to its starting settings
-    cam.setActive(true);  // false to make this camera stop responding to mouse
-    break;
-  case "stop camera":
-    cam.lookAt(0, 0, 0);
-    cam.reset(500);  // reset camera to its starting settings
-    cam.setActive(false);  // false to make this camera stop responding to mouse
-    break;
-  case "reset position":
-    cam.lookAt(0, 0, 0);
-    cam.reset(500);  // reset camera to its starting settings
-    break;
-  case "The Standard Book of Spells":
-    show_help = true;
-    break;
-  case "charms":
-    show_help = true;
-    break;
-  case "help":
-    show_help = true;
-    break;
-  case "close help":
-    show_help = false;
-    break;
-  default:
-    break;
+  int i = 0;
+  while (i<letters.length)
+  {
+    println("Processing word: "+(i+1)+"/"+letters.length);
+    isProcessing=true;
+    switch(letters[i]) {
+    case "hylkeet":
+      testikuva = loadImage("testi.jpg");
+      break;
+    case "reds":
+      redPixelsToBlue(testikuva);
+      break;
+    case "blur":
+      blur(testikuva);
+      break;
+    case "blurs":
+      blur(testikuva);
+      break;
+    case "blurred":
+      blur(testikuva);
+      break;
+    case "white to red":
+      whitePixelsToRed(testikuva, 250);
+      break;
+    case "sorting":
+      pixelSorting(testikuva, int(random(10, 50)));
+      break;
+    case "mirror":
+      mirror(testikuva);
+      break;
+    case "difference":
+      //difference(testikuva, testikuva2);
+      break;
+    case "stretch":
+      stretch(testikuva, int(random(testikuva.width)));
+      break;
+    case "rectangle":
+      drawRect();
+      break;
+    case "save":
+      record=true;
+      break;
+    case "saveFrame":
+      record_sequence = !record_sequence;
+      break;
+    case "stop":
+      record_sequence = false;
+      record = false;
+      break;
+    case "loadImage":
+      testikuva = loadImage("testi.jpg");
+      testikuva2 = loadImage("testi2.jpg");
+      break;
+    case "image":
+      selectInput("Select a file to process:", "fileSelected");
+      break;
+    case "float":
+      cam.lookAt(0, 0, 0);
+      cam.reset(500);  // reset camera to its starting settings
+      cam.setActive(true);  // false to make this camera stop responding to mouse
+      cameraActive=true;
+      break;
+    case "freeze":
+      cam.lookAt(0, 0, 0);
+      cam.reset(500);  // reset camera to its starting settings
+      cam.setActive(false);  // false to make this camera stop responding to mouse
+      cameraActive=false;
+      break;
+    case "reset":
+      cam.lookAt(0, 0, 0);
+      cam.reset(500);  // reset camera to its starting settings
+      break;
+    case "SBS":
+      show_help = true;
+      break;
+    case "charms":
+      show_help = true;
+      break;
+    case "help":
+      show_help = true;
+      break;
+    case "helpless":
+      show_help = false;
+      break;
+    default:
+      break;
+    }
+    i++;
   }
 }
 //////////////////////////////////////////////////
@@ -331,6 +360,15 @@ void doodling(PImage img)
     drawing.ellipse(mouseX, mouseY, 10, 10);
     drawing.endDraw();
   }
+}
+
+void drawRect()
+{
+  drawing.beginDraw();
+  drawing.noStroke();
+  drawing.fill(random(255), random(255), random(255));
+  drawing.rect(random(width), random(height), 50, 50);
+  drawing.endDraw();
 }
 
 //////////////////////////////////////////////////
@@ -499,7 +537,7 @@ void drawMagicWords()
   } else
   {
     textSize(22);
-    fill(0);
+    fill(0, 50);
     text("Type 'charms' and hit ENTER for magic. Press ESC to quit.", 50, 51);
     text("Type 'charms' and hit ENTER for magic. Press ESC to quit.", 49, 49);
     text("Type 'charms' and hit ENTER for magic. Press ESC to quit.", 51, 50);
@@ -517,12 +555,12 @@ void drawText(String t, float x, float y, int s)
 {
   textSize(s);
   fill(0);
-  text(t,x-1,y);
-  text(t,x+1,y);
-  text(t,x,y+1);
-  text(t,x,y-1);
+  text(t, x-1, y);
+  text(t, x+1, y);
+  text(t, x, y+1);
+  text(t, x, y-1);
   fill(255);
-  text(t,x,y);
+  text(t, x, y);
 }
 
 void fileSelected(File selection) {
