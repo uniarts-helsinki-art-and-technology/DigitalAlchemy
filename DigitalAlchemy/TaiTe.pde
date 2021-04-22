@@ -1,5 +1,5 @@
 import peasy.PeasyCam;
-import drop.*;
+//import drop.*;
 
 
 //////////////////////////////////////////////////
@@ -34,7 +34,7 @@ String magic_words_list[] = {
   "noisy", 
   " ", 
   "save", 
-  "saveFrame", 
+  "record", 
   "stop", 
   "loadImage", 
   "image", 
@@ -189,7 +189,7 @@ void runFunction(String letters[])
     case "save":
       record=true;
       break;
-    case "saveFrame":
+    case "record":
       record_sequence = !record_sequence;
       break;
     case "stop":
@@ -684,7 +684,7 @@ void reset_camera()
 //                FUNCTIONS: DROP
 //////////////////////////////////////////////////
 
-
+/*
 public class SecondApplet extends PApplet {
   SDrop drop;
 
@@ -706,3 +706,4 @@ public class SecondApplet extends PApplet {
     }
   }
 }
+*/
