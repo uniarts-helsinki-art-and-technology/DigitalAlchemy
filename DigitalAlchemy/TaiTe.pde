@@ -27,6 +27,11 @@ String magic_words_list[] = {
   "sorting", 
   "mirror", 
   "stretch", 
+  "transparency", 
+  "magic", 
+  " ", 
+  "rectangle", 
+  "noisy", 
   " ", 
   "save", 
   "saveFrame", 
@@ -162,8 +167,24 @@ void runFunction(String letters[])
     case "stretch":
       stretch(testikuva, int(random(testikuva.width)));
       break;
+    case "transparency":
+      transparent(testikuva);
+      break;
+    case "magic":
+      convertImageToText(testikuva);
+      break;
+    case "distortion":
+      PImage temp_img = loadImage("testi2.jpg");
+      distortion(temp_img);
+      break;
     case "rectangle":
       drawRect();
+      break;
+    case "noisy":
+      noiseRect(200, 320, 130, 90);
+      break;
+    case "line":
+      noiseLine(int(random(testikuva.height)));
       break;
     case "save":
       record=true;
@@ -327,6 +348,57 @@ void stretch(PImage img, int limit)
   img.updatePixels();
 }
 
+void transparent(PImage img)
+{
+  for (int i=0; i<img.width; i++) {
+    for (int j=0; j<img.height; j++) {
+      int loc = i + img.width*j;
+      int a = int(random(0, 255));
+      img.pixels[loc] = (100 >> 24) & 0xFF;
+    }
+  }
+  img.updatePixels();
+}
+
+void convertImageToText(PImage img)
+{
+  String text = " .`-_':,;^=+/\"|)\\<>)iv%xclrs{*}I?!][1taeo7zjLunT#JCwfy325Fp6mqSghVd4EgXPGZbYkOA&8U$@KHDBWNMR0Q";
+
+  img.loadPixels();
+  drawing.beginDraw();
+
+  for (int y = 0; y < img.height; y+=7) {
+    for (int x = 0; x < img.width; x+=7) {
+      color c = img.get(x, y);
+      int b = int(brightness(c));
+      int bright = int(map(b, 0, 255, 0, 60));         
+      char letter= text.charAt(bright);
+      drawing.fill(c);
+      drawing.text(str(letter), x, y );
+    }
+  }
+  drawing.endDraw();
+}
+
+void distortion(PImage img)
+{
+  drawing.beginDraw();
+  drawing.beginShape();
+  drawing.texture(img);
+  drawing.noStroke();
+  int mX = int(random(width));
+  int mY = int(random(height));
+
+  drawing.vertex(mX, mY, mX, mY);
+  drawing.vertex(random(80)+80+mX, 5+mY, mX+100, mY);
+  drawing.vertex(random(90)+95+mX, random(20)+90+mY, mX+100, mY+100);
+  drawing.vertex(random(10)+40+mX, random(20)+95+mY, mX, mY+100);
+
+  drawing.endShape();
+  drawing.endDraw();
+}
+
+
 void blur(PImage img)
 {
   img.filter(BLUR, 2);
@@ -368,6 +440,29 @@ void drawRect()
   drawing.noStroke();
   drawing.fill(random(255), random(255), random(255));
   drawing.rect(random(width), random(height), 50, 50);
+  drawing.endDraw();
+}
+
+void noiseRect(int _x, int _y, int _w, int _h)
+{
+  drawing.beginDraw();
+  for (int y = _y; y<_y+_h; y=y+1)
+  {
+    for (int x = _x; x<_x+_w; x=x+1) // THIS LOOPS ONE LINE
+    {
+      drawing.set(x, y, color(random(255), random(255), random(255)));
+    }
+  }
+  drawing.endDraw();
+}
+
+void noiseLine(int y)
+{
+  drawing.beginDraw();
+  for (int x = 0; x<drawing.width; x=x+1) // THIS LOOPS ONE LINE
+  {
+    drawing.set(x, y, color(random(255), random(255), random(255)));
+  }
   drawing.endDraw();
 }
 
@@ -453,7 +548,7 @@ void startAlchemy()
   moving_set_speed(50);
 
 
-  drawing = createGraphics(width, height);
+  drawing = createGraphics(width, height, P3D);
   drawing.beginDraw();
   drawing.clear();
   drawing.endDraw();
@@ -520,12 +615,13 @@ void drawMagicWords()
   if (show_help)
   {
     //background(0);
-    int text_size = 30;
+    int text_size = 20;
     textSize(text_size);
     int x = text_size*2;
     int y = text_size*2;
     for (int i = 0; i<magic_words_list.length; i++)
     {
+      textAlign(LEFT);
       text(magic_words_list[i], x, y);
       y+=text_size*2;
       if (y>height)
@@ -548,7 +644,7 @@ void drawMagicWords()
 
   textSize(30);
   textAlign(CENTER);
- // text(magic_words, width/2-textWidth(magic_words)/2, height-200, width, height);
+  // text(magic_words, width/2-textWidth(magic_words)/2, height-200, width, height);
   text(magic_words, 0, height/2, width, height);
 
   cam.endHUD(); // always

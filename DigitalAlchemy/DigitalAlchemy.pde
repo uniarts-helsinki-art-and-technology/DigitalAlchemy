@@ -13,7 +13,7 @@ void setup()
 
 void draw()
 {
-  background(20);
+  background(0);
   if(!isProcessing)
   {
   // Should manipulate pixels!  drawFlippedImage(testikuva);
