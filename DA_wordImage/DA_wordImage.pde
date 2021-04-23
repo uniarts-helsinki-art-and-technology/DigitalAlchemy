@@ -18,6 +18,7 @@ void setup()
   list_of_words.append("coffee");
   list_of_words.append("tea");
   list_of_words.append("images");
+
 }
 
 void draw() 
